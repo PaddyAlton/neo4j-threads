@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: threads-app
+    command: --host 0.0.0.0 --port 8765 --reload
+    env_file:
+      - .env
+    networks:
+      - threads-network
+    ports:
+      - 8765:8765
+    volumes:
+      - ./src:/threads/src  # overwrite source code with local changes
+    depends_on:
+      - graph-db
+
+  graph-db:
+    image: neo4j:5.9.0
+    container_name: graph-db
+    env_file:
+      - .env
+    networks:
+      - threads-network
+    ports:
+      - 7474:7474
+      - 7687:7687
+    restart: always
+    volumes:
+      - neo4j-forum-data:/data
+      - neo4j-forum-logs:/logs
+
+networks:
+  threads-network:
+
+volumes:
+  neo4j-forum-data:
+  neo4j-forum-logs:

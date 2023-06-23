@@ -1,0 +1,39 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[requires]
+python_version = "3.10"
+
+[dev-packages]
+black = "*"
+mypy = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-mock = "*"
+pytest-testmon = "*"
+pytest-watch = "*"
+requests = "*"
+ruff = "*"
+
+[packages]
+fastapi = ">=0.97.0, <0.98"
+neomodel = ">=5.0.1, <5.1"
+pydantic = "2.0b3"
+uvicorn = ">=0.22.0, <0.23"
+
+[scripts]
+constraints = "neomodel_install_labels src/models.py --db bolt://$DBUSER:$DBPASS@localhost:7687"
+coverage = "pytest --cov=src --cov-fail-under=0 --cov-report term-missing"
+fmt = "black --check src tests"
+fmt-fix = "black src tests"
+lint = "ruff check ."
+lint-fix = "ruff check --fix ."
+mypy = "mypy --config-file ./mypy/mypy.ini src"
+ptw = "pytest-watch"
+setup = """bash -c "git config core.hooksPath git_hooks && \
+            chmod +x git_hooks/pre-* && \
+            cp --no-clobber default.env .env && \
+            pipenv install --dev" """
+start = "uvicorn src:app --host 0.0.0.0 --port 8765 --reload"
